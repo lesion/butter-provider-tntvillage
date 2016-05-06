@@ -32,6 +32,7 @@ TNT.prototype.config = {
 };
 
 function formatForButter(items) {
+  console.error('dentro formatforbutter ', items)
   var results = {};
   var movieFetch = {};
   movieFetch.results = [];
@@ -40,17 +41,17 @@ function formatForButter(items) {
     if (movie.Quality === '3D') {
       return;
     }
-    var imdb = movie.ImdbCode;
+    var imdb = parseInt(Math.random() * 1000, 10).toString();
 
     // Calc torrent health
     var seeds = 0; //XXX movie.TorrentSeeds;
     var peers = 0; //XXX movie.TorrentPeers;
 
     var torrents = {};
-    torrents[movie.Quality] = {
-      url: movie.TorrentUrl,
-      size: movie.SizeByte,
-      filesize: movie.Size,
+    torrents['720p'] = {
+      url: movie.torrent,
+      size: 1000,
+      filesize: "1.02G",
       seed: seeds,
       peer: peers
     };
@@ -59,13 +60,15 @@ function formatForButter(items) {
     if (!ptItem) {
       ptItem = {
         imdb_id: imdb,
-        title: movie.MovieTitleClean.replace(/\([^)]*\)|1080p|DIRECTORS CUT|EXTENDED|UNRATED|3D|[()]/g, ''),
-        year: movie.MovieYear,
-        genre: [movie.Genre],
-        rating: movie.MovieRating,
-        image: movie.CoverImage,
-        cover: movie.CoverImage,
-        backdrop: movie.CoverImage,
+        title: movie.title.replace(/\([^)]*\)|1080p|DIRECTORS CUT|EXTENDED|UNRATED|3D|[()]/g, ''),
+        year: 2010,
+        runtime: 90,
+        _id: imdb,
+        genres: ['war'],
+        rating: "10",
+        image: 'http://vodo.net/media/posters/poster_personofinterest.jpg',
+        cover: 'http://vodo.net/media/posters/poster_personofinterest.jpg',
+        backdrop: 'http://vodo.net/media/posters/poster_personofinterest.jpg',
         torrents: torrents,
         subtitle: {}, // TODO
         trailer: false,
@@ -80,7 +83,8 @@ function formatForButter(items) {
 
     results[imdb] = ptItem;
   });
-
+  console.error('alla fine di formatfo')
+  console.error(movieFetch.results)
   return movieFetch.results;
 }
 
@@ -90,14 +94,15 @@ TNT.prototype.extractIds = function(items) {
 
 TNT.prototype.updateAPI = function() {
   console.error('SONO DENRO UPDAT !!!')
-  var self = this;
-  var defer = Q.defer();
+  // var self = this;
+  // var defer = Q.defer();
   console.info('Request to TNT');
   return tnt_provider
     .update()
     .then(function(data) {
+      console.error('DOPO UPDATE !! qui dovrei avere la ciccia !!')
       console.error(data)
-      return data
+        // return data
         // request({
         //     uri: apiUrl,
         //     strictSSL: false,
@@ -111,16 +116,18 @@ TNT.prototype.updateAPI = function() {
           return item;
           });
         */
+       
       db.insert(formatForButter(data), function(err, newDocs) {
         if (err) {
           console.error('TNT.updateAPI(): Error inserting', err);
         }
 
         db.find({}).limit(2).exec(function(err, docs) {
-          //console.debug('FIND ---->', err, docs);
+          console.debug('FIND ---->', err, docs);
         });
-        defer.resolve(newDocs);
+        return newDocs;
       });
+      return formatForButter(data)
     });
 
   // return defer.promise;
@@ -161,8 +168,10 @@ TNT.prototype.fetch = function(filters) {
   var sortOpts = {};
   sortOpts[params.sort] = params.order;
 
-  self.fetchPromise.then(function(data) {
+  return self.fetchPromise.then(function(data,altricazzi) {
     console.error('demtrp qoifj sodfij soidf ')
+    console.error(data)
+    console.error(altricazzi)
       // db.find(findOpts)
       //   .sort(sortOpts)
       //   .skip((filters.page - 1) * params.limit)
@@ -174,13 +183,13 @@ TNT.prototype.fetch = function(filters) {
 
     console.error('dentro DATA: ')
     console.error(data)
-    return defer.resolve({
+    return {
       results: data,
       hasMore: data.length ? true : false
-    });
+    }
   });
 
-  return defer.promise;
+  // return defer.promise;
 };
 
 TNT.prototype.random = function() {

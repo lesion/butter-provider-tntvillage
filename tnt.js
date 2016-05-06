@@ -52,36 +52,34 @@ module.exports = (function() {
   self.update = function() {
     return fetch('http://www.tntvillage.scambioetico.org/rss.php?c=4&p=10')
       .then(function(res) {
-        console.error('dopo il fetch, ma porcoddio ')
-        console.error(typeof res)
-        console.error(res)
         return res.text();
       })
       .then(function(data) {
-        console.error(data)
-        console.error('son qui prima di xml2json')
-        return new Promise(function(reject,resolve){
+        return new Promise(function(resolve, reject) {
           var parser = new require('xml2js').Parser()
-          return parser.parseString(data,function(err,res){
-            if(!err)
-              return resolve(res)
-            return reject(err)
+          return parser.parseString(data, function(err, res) {
+            if (!err) {
+              resolve(res)
+            } else {
+              reject(err)
+            }
           })
         })
       })
       .then(function(data) {
-        data.rss.channel.item.map(function(f) {
-          console.error('cosa ne dici di questo ! ');
-          console.error(f)
+        return data.rss.channel[0].item.map(function(f) {
+          console.error(f.enclosure[0].$.url)
           return {
-            title: f.title,
-            link: f.link,
-            torrent: f.enclosure.url,
+            title: f.title[0],
+            link: f.link[0],
+            torrent: f.enclosure[0].$.url,
             length: toSize(f.enclosure.length, 1)
           }
         })
       })
-      .catch(function(e){console.error('eggia!',e);})
+      .catch(function(e) {
+        console.error('eggia!', e);
+      })
   }
 
   // self.update()
