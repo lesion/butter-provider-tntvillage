@@ -16,13 +16,13 @@
     "util": "^0.10.3",
     "xml2js": "^0.4.16"
   },
-  "description": "A Butter provider for VODO.net",
+  "description": "A Butter provider for TNTVillage",
   "devDependencies": {
     "butter-test-provider": "0.0.3",
     "tape": "^4.5.1"
   },
   "keywords": [
-    "vodo",
+    "tntvillage",
     "butter",
     "streaming"
   ],
@@ -30,11 +30,11 @@
   "main": "index.js",
   "name": "butter-provider-tntvillage",
   "optionalDependencies": {},
-  "readme": "This is a [[https://github.com/butterproject][Butter]] provider to access content from the https://vo.do service,\nif you want to find more info on Butter Providers check the [[https://github.com/butterproject/butter-provider][Butter Provider\nDocs]].\n",
+  "readme": "This is a [[https://github.com/butterproject][Butter]] provider to access content from the [[http://www.tntvillage.scambioetico.org/][TNTVillage]] service,\nif you want to find more info on Butter Providers check the [[https://github.com/butterproject/butter-provider][Butter Provider\nDocs]].\n",
   "readmeFilename": "README.org",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/butterproviders/butter-provider-vodo.git"
+    "url": "git+https://github.com/lesion/butter-provider-tntvillage.git"
   },
   "scripts": {
     "test": "tape ./node_modules/butter-test-provider/tests/*"
